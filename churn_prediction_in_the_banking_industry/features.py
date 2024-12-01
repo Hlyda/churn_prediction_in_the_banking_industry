@@ -1,29 +1,28 @@
-from pathlib import Path
-
-import typer
-from loguru import logger
-from tqdm import tqdm
-
-from churn_prediction_in_the_banking_industry.config import PROCESSED_DATA_DIR
-
-app = typer.Typer()
+import pandas as pd
+from sklearn.preprocessing import StandardScaler,LabelEncoder # Encoding categorical variables
 
 
-@app.command()
-def main(
-    # ---- REPLACE DEFAULT PATHS AS APPROPRIATE ----
-    input_path: Path = PROCESSED_DATA_DIR / "dataset.csv",
-    output_path: Path = PROCESSED_DATA_DIR / "features.csv",
-    # -----------------------------------------
-):
-    # ---- REPLACE THIS WITH YOUR OWN CODE ----
-    logger.info("Generating features from dataset...")
-    for i in tqdm(range(10), total=10):
-        if i == 5:
-            logger.info("Something happened for iteration 5.")
-    logger.success("Features generation complete.")
-    # -----------------------------------------
+def check_missing_value(df): 
+    df.isnull().sum() # check missing values
 
+def check_duplicated(df): 
+    df[df.duplicated()]
 
-if __name__ == "__main__":
-    app()
+def drop_unnecessary_columns(df): 
+    # Drop unnecessary columns
+    # 'RowNumber', 'CustomerId', and 'Surname' are irrelevant for prediction
+    df =df.drop(columns=['RowNumber', 'CustomerId', 'Surname'], inplace=True)
+    return df
+
+def encode_variables(df): 
+        # Instantiate the LabelEncoder
+        label_encoder = LabelEncoder()
+        df['Gender'] = label_encoder.fit_transform(df['Gender'])
+        df= pd.get_dummies(df, columns=['Geography'], drop_first=True)
+        return df
+
+def preprocess_data(df):
+    # Exemple de traitement
+    df = df.drop(columns=["RowNumber", "CustomerId", "Surname"])  # Suppression des colonnes inutiles
+    df = pd.get_dummies(df, drop_first=True)  # Encodage des variables catégoriques
+    return df

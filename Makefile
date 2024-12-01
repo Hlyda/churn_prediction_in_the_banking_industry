@@ -59,7 +59,10 @@ create_environment:
 .PHONY: data
 data: requirements
 	$(PYTHON_INTERPRETER) churn_prediction_in_the_banking_industry/dataset.py
-
+	
+.PHONY: run
+run: requirements
+	$(PYTHON_INTERPRETER) -m churn_prediction_in_the_banking_industry.main
 
 #################################################################################
 # Self Documenting Commands                                                     #
