@@ -1,35 +1,33 @@
-from pathlib import Path
+
 import matplotlib.pyplot as plt
 import seaborn as sns
-import typer
-from loguru import logger
-from tqdm import tqdm
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 
-from churn_prediction_in_the_banking_industry.config import FIGURES_DIR, PROCESSED_DATA_DIR
+def plot_feature_distribution(df, column):
+    """Plot the distribution of a specific feature."""
+    sns.histplot(df[column], kde=True)
+    plt.title(f"Distribution of {column}")
+    plt.show()
 
-app = typer.Typer()
+def plot_confusion_matrix(y_test, y_pred):
+    """Plot a confusion matrix using Seaborn."""
+    conf_matrix = confusion_matrix(y_test, y_pred)
+    print("Confusion Matrix:")
+    print(conf_matrix)
 
-def visualize_distribution (df): 
-    # Visualize the class distribution (target variable)
+def class_distribution (df) :
     sns.countplot(x='Exited', data=df)
     plt.title("Churn Distribution")
     plt.show()
-    
-@app.command()
-def main(
-    # ---- REPLACE DEFAULT PATHS AS APPROPRIATE ----
-    input_path: Path = PROCESSED_DATA_DIR / "dataset.csv",
-    output_path: Path = FIGURES_DIR / "plot.png",
-    # -----------------------------------------
-):
-    # ---- REPLACE THIS WITH YOUR OWN CODE ----
-    logger.info("Generating plot from data...")
-    for i in tqdm(range(10), total=10):
-        if i == 5:
-            logger.info("Something happened for iteration 5.")
-    logger.success("Plot generation complete.")
-    # -----------------------------------------
+def class_report (y_test, y_pred):
+    class_report = classification_report(y_test, y_pred)
+    print('class report', class_report)
 
+def acc_score (y_test, y_pred):
+    accuracy_plot = accuracy_score(y_test, y_pred)
+    print('accuracy score', accuracy_plot)
 
-if __name__ == "__main__":
-    app()
+def gender_distribution(df) :
+    g= sns.catplot(x = "Gender", y = "Exited", data = df, kind = "bar", height = 5)
+    g.set_ylabels("Churn Probability")
+    plt.show()
